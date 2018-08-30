@@ -1,0 +1,15 @@
+@{
+    ViewBag.Title = "Новостная лента";
+}
+
+<a asp-action="Index">Вариант страницы с синхронным режимом работы</a>
+@await Component.InvokeAsync(nameof(RequestForm), new RequestFormData())
+<br />
+<div id="news"></div>
+<script asp-src-include="~/lib/**/*.min.js"></script>
+<environment include="Development">
+    <script asp-src-include="~/js/*.js" asp-src-exclude="~/js/*.min.js"></script>
+</environment>
+<environment exclude="Development">
+    <script asp-src-include="~/js/*.min.js"></script>
+</environment>

@@ -1,0 +1,7 @@
+﻿{
+  "UseSqlServer": true,
+  "ConnectionStrings": {
+    "SqliteServer": "Data Source=News.db",
+    "SqlServer": "Server=(localdb)\\MSSQLLocalDB;Database=News;Trusted_Connection=True;MultipleActiveResultSets=true"
+  }
+}

@@ -1,0 +1,12 @@
+@model RequestFormData
+
+<form id="request-form" method="POST" asp-action="Index" asp-antiforgery="false">
+    <label asp-for="NewsSource">Источник ленты:</label>
+    <select asp-for="NewsSource" asp-items="ViewBag.NewsSources">
+        <option value="">все</option>
+    </select><br />
+    Сортировать по
+    @Html.RadioButtonFor(m => m.OrderByDate, true)<label>дате</label>
+    @Html.RadioButtonFor(m => m.OrderByDate, false)<label>источнику</label><br />
+    <input type="submit" value="Просмотреть" />
+</form>
