@@ -73,7 +73,7 @@ namespace ConsoleApp1
         {
             var newsSources = new List<NewsSource>();
 
-            for (var i = 0; i <= Math.Floor((decimal) args.Length / 2); i += 2)
+            for (int i = 0, n = 1; n <= Math.Floor((decimal) args.Length / 2); i += 2, n++)
             {
                 newsSources.Add(new NewsSource
                 {
