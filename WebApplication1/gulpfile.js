@@ -4,16 +4,7 @@ const gulp = require("gulp"),
     minify = require("gulp-minify"),
     sourcemaps = require("gulp-sourcemaps");
 
-gulp.task("default", ["copy", "min"]);
-
-gulp.task("copy", ["copy:jquery"])
-
-gulp.task("copy:jquery", () => {
-    let result = gulp.src("node_modules/jquery/dist/jquery.min.*")
-        .pipe(gulp.dest("wwwroot/lib/jquery"));
-
-    return result;
-});
+gulp.task("default", ["min"]);
 
 gulp.task("min", ["min:js"]);
 
