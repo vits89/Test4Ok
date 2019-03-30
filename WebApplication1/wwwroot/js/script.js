@@ -2,8 +2,8 @@
 
 const apiUrl = "http://localhost:5728/api/newsapi";
 
-$(function() {
-    $("form#request-form").on("submit", event => {
+$(() => {
+    $("form#request-form").on("submit", function(event) {
         event.preventDefault();
 
         let formData = {
@@ -73,10 +73,10 @@ function createTable(news) {
 function createPaginator(pagingInfo, requestData) {
     let anchorElement,
         anchorDataValues = { },
-        paginator = $("<div></div>").on("click", "a", paginatorOnClickEventHandler);
+        paginator = $("<div></div>").on("click", "a", paginatorClickEventHandler);
 
     for (let p = 1; p <= pagingInfo.totalPages; p++) {
-        if (p == pagingInfo.currentPage) {
+        if (p === pagingInfo.currentPage) {
             $(paginator).append(p);
         } else {
             anchorDataValues.newsSource = requestData.newsSource;
@@ -94,7 +94,7 @@ function createPaginator(pagingInfo, requestData) {
     return paginator;
 }
 
-function paginatorOnClickEventHandler(event) {
+function paginatorClickEventHandler(event) {
     event.preventDefault();
 
     let request = {
