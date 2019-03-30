@@ -19,7 +19,7 @@ namespace WebApplication1
         {
             var useSqlServer = Configuration.GetValue<bool>("UseSqlServer");
 
-            var connString = Configuration.GetConnectionString(useSqlServer ? "SqlServer" : "SqliteServer");
+            var connString = Configuration.GetConnectionString(useSqlServer ? "SqlServer" : "Sqlite");
 
             services.AddDbContext<AppDbContext>(options =>
             {

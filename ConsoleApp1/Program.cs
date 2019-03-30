@@ -95,7 +95,7 @@ namespace ConsoleApp1
             var conf = confBuilder.Build();
 
             var useSqlServer = conf.GetValue<bool>("UseSqlServer");
-            var connString = conf.GetConnectionString(useSqlServer ? "SqlServer" : "SqliteServer");
+            var connString = conf.GetConnectionString(useSqlServer ? "SqlServer" : "Sqlite");
 
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 
