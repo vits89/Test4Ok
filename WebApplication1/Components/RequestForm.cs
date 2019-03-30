@@ -15,7 +15,9 @@ namespace WebApplication1.Components
         {
             var newsSources = _dbContext.NewsSources.OrderBy(ns => ns.Name);
 
-            ViewBag.NewsSources = new SelectList(newsSources, "Id", "Name");
+            ViewBag.NewsSources = new SelectList(newsSources,
+                nameof(ClassLibrary1.Models.NewsSource.Id),
+                nameof(ClassLibrary1.Models.NewsSource.Name));
 
             return View(requestFormData);
         }
