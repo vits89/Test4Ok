@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using WebApplication1.Models;
 
 namespace WebApplication1
@@ -32,11 +33,11 @@ namespace WebApplication1
                     options.UseSqlite(connString);
                 }
             });
-            services.AddMvc();
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -45,21 +46,22 @@ namespace WebApplication1
 
             app.UseStatusCodePages();
             app.UseStaticFiles();
-            app.UseMvc(routes =>
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: null,
-                    template: "NewsSource{newsSource:int}/Page{page:int}/{orderByDate:bool?}",
+                    pattern: "NewsSource{newsSource:int}/Page{page:int}/{orderByDate:bool?}",
                     defaults: new { controller = "News", action = "Index" }
                 );
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: null,
-                    template: "Page{page:int}/{orderByDate:bool?}",
+                    pattern: "Page{page:int}/{orderByDate:bool?}",
                     defaults: new { controller = "News", action = "Index" }
                 );
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=News}/{action=Index}/{page?}"
+                    pattern: "{controller=News}/{action=Index}/{page?}"
                 );
             });
         }

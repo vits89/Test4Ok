@@ -1,20 +1,23 @@
 ﻿using System;
 using System.Reflection;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace WebApplication1
 {
     public class Program
     {
-        public static void Main(string[] args) => CreateWebHostBuilder(args).Build().Run();
+        public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        public static IHostBuilder CreateHostBuilder(string[] args)
         {
-            return WebHost
-                .CreateDefaultBuilder<Startup>(args)
-                .UseConfiguration(GetConfiguration(args));
+            return Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(builder =>
+                {
+                    builder.UseConfiguration(GetConfiguration(args))
+                        .UseStartup<Startup>();
+                });
         }
 
         private static IConfigurationRoot GetConfiguration(string[] args)
@@ -30,7 +33,7 @@ namespace WebApplication1
             {
                 confBuilder.AddJsonFile($"appsettings.{env}.json", optional: true, reloadOnChange: true);
 
-                if (env == EnvironmentName.Development)
+                if (env == Environments.Development)
                 {
                     var appAssembly = Assembly.Load(new AssemblyName(Assembly.GetEntryAssembly().GetName().Name));
 
