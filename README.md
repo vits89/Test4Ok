@@ -4,9 +4,7 @@
 Источники новостей передаются консольному приложению как аргументы командной строки в виде пар *название URL*, разделённых пробелами или табуляциями. По-умолчанию передаются источники, указанные в PDF-файле.
 
 Перед запуском Web-приложения нужно:
-- Установить jQuery с помощью Library Manager (см. [документацию](https://docs.microsoft.com/ru-ru/aspnet/core/client-side/libman/?view=aspnetcore-2.2))
+- Установить jQuery с помощью Library Manager, запустив из консоли `dotnet tool run libman restore`
 - Установить пакеты с помощью NPM, запустив из консоли `npm install`
-- При необходимости изменить URL к API, присваиваемый константе `apiUrl` в файле *wwwroot\js\script.js*
-- Выполнить задачу по-умолчанию Gulp с помощью NPM, запустив из консоли `npm run gulp`
 
-По-умолчанию в качестве СУБД используется Microsoft SQL Server (LocalDB), но можно использовать SQLite. Для этого надо или в файле *sharedappsettings.json* решения, или в *appsettings.json* проектов изменить значение свойства `UseSqlServer` на `false`. Кроме этого, нужно вручную скопировать файл базы данных (по-умолчанию *News.db*) из папки консольного приложения в папку Web-приложения.
+По-умолчанию в качестве СУБД используется Microsoft SQL Server (LocalDB), но можно использовать SQLite. Для этого надо или в файле *sharedappsettings.json* решения, или в *appsettings.json* проектов изменить значение свойства `UseSqlServer` на `false`.
