@@ -1,8 +1,9 @@
+using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Models;
-using WebApplication1.Models.ViewModels;
+using WebApplication1.ViewModels;
 
 namespace WebApplication1.Controllers
 {
@@ -12,7 +13,10 @@ namespace WebApplication1.Controllers
 
         protected readonly AppDbContext _dbContext;
 
-        public NewsBaseController(AppDbContext dbContext) => _dbContext = dbContext;
+        public NewsBaseController(AppDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
 
         protected NewsViewModel GetNews(int? newsSource, bool? orderByDate, int page)
         {
@@ -26,14 +30,14 @@ namespace WebApplication1.Controllers
                 NewsSource = newsSource
             };
 
-            if (orderByDate != null)
+            if (orderByDate.HasValue)
             {
-                requestFormData.OrderByDate = (bool) orderByDate;
+                requestFormData.OrderByDate = orderByDate.Value;
             }
 
             var newsViewModel = new NewsViewModel
             {
-                News = new ClassLibrary1.Models.News[] { },
+                News = Array.Empty<ClassLibrary1.Models.News>(),
                 PagingInfo = pagingInfo,
                 RequestFormData = requestFormData
             };
@@ -45,19 +49,22 @@ namespace WebApplication1.Controllers
 
             var news = _dbContext.News.Include(n => n.NewsSource).AsQueryable();
 
-            if (requestFormData.NewsSource != null)
+            if (requestFormData.NewsSource.HasValue)
             {
-                if (_dbContext.NewsSources.Find(requestFormData.NewsSource) == null)
+                if (_dbContext.NewsSources.Find(requestFormData.NewsSource.Value) == null)
                 {
                     return newsViewModel;
                 }
 
-                news = news.Where(n => n.NewsSource.Id == requestFormData.NewsSource);
+                news = news.Where(n => n.NewsSource.Id == requestFormData.NewsSource.Value);
             }
 
             pagingInfo.TotalItems = news.Count();
 
-            news = requestFormData.OrderByDate ? news.OrderByDescending(n => n.PublishDate) : news.OrderBy(n => n.NewsSource.Name);
+            news = requestFormData.OrderByDate ?
+                news.OrderByDescending(n => n.PublishDate) :
+                news.OrderBy(n => n.NewsSource.Name);
+
             news = news.Skip((pagingInfo.CurrentPage - 1) * NEWS_PER_PAGE).Take(NEWS_PER_PAGE);
 
             newsViewModel.News = news.ToArray();

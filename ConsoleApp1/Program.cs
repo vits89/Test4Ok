@@ -89,8 +89,8 @@ namespace ConsoleApp1
         {
             var confBuilder = new ConfigurationBuilder();
 
-            confBuilder.AddJsonFile("sharedappsettings.json", optional: true);
-            confBuilder.AddJsonFile("appsettings.json", optional: true);
+            confBuilder.AddJsonFile("sharedappsettings.json", optional: true)
+                .AddJsonFile("appsettings.json", optional: true);
 
             var conf = confBuilder.Build();
 

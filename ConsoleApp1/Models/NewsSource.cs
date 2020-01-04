@@ -10,6 +10,9 @@ namespace ConsoleApp1.Models
         [NotMapped]
         public int SavedOfNews { get; set; }
 
-        public override string ToString() => $"Источник: {Name}; прочитано новостей: {ReadOfNews}; сохранено новостей: {SavedOfNews}.";
+        public override string ToString()
+        {
+            return $"Источник: {Name}; прочитано новостей: {ReadOfNews}; сохранено новостей: {SavedOfNews}.";
+        }
     }
 }

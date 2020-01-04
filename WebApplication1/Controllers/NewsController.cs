@@ -9,8 +9,8 @@ namespace WebApplication1.Controllers
 
         public IActionResult Index(int? newsSource, bool? orderByDate, int page = 1)
         {
-            newsSource = newsSource ?? TempData["newsSource"] as int?;
-            orderByDate = orderByDate ?? TempData["orderByDate"] as bool?;
+            newsSource ??= TempData["newsSource"] as int?;
+            orderByDate ??= TempData["orderByDate"] as bool?;
 
             return View(GetNews(newsSource, orderByDate, page));
         }
@@ -26,6 +26,9 @@ namespace WebApplication1.Controllers
             return RedirectToAction();
         }
 
-        public IActionResult IndexApi() => View();
+        public IActionResult IndexApi()
+        {
+            return View();
+        }
     }
 }

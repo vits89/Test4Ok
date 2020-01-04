@@ -1,6 +1,6 @@
 using System;
 
-namespace WebApplication1.Models.ViewModels
+namespace WebApplication1.ViewModels
 {
     public class PagingInfoViewModel
     {

@@ -6,7 +6,7 @@
 <a asp-action="IndexApi">Вариант страницы с асинхронным режимом работы</a>
 @await Component.InvokeAsync(nameof(RequestForm), Model.RequestFormData)
 <br />
-@if (Model.News.Length > 0)
+@if (Model.News.Count() > 0)
 {
     <table>
         <thead>

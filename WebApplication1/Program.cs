@@ -8,7 +8,10 @@ namespace WebApplication1
 {
     public class Program
     {
-        public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
+        public static void Main(string[] args)
+        {
+            CreateHostBuilder(args).Build().Run();
+        }
 
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
@@ -24,8 +27,8 @@ namespace WebApplication1
         {
             var confBuilder = new ConfigurationBuilder();
 
-            confBuilder.AddJsonFile("sharedappsettings.json", optional: true, reloadOnChange: true);
-            confBuilder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            confBuilder.AddJsonFile("sharedappsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
             var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
@@ -44,8 +47,8 @@ namespace WebApplication1
                 }
             }
 
-            confBuilder.AddEnvironmentVariables();
-            confBuilder.AddCommandLine(args);
+            confBuilder.AddEnvironmentVariables()
+                .AddCommandLine(args);
 
             return confBuilder.Build();
         }

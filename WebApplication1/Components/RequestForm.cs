@@ -9,7 +9,10 @@ namespace WebApplication1.Components
     {
         private readonly AppDbContext _dbContext;
 
-        public RequestForm(AppDbContext dbContext) => _dbContext = dbContext;
+        public RequestForm(AppDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
 
         public IViewComponentResult Invoke(RequestFormData requestFormData)
         {

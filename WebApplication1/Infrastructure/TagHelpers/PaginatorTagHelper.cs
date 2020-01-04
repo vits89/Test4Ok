@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using WebApplication1.Models;
-using WebApplication1.Models.ViewModels;
+using WebApplication1.ViewModels;
 
 namespace WebApplication1.Infrastructure.TagHelpers
 {
@@ -21,7 +21,10 @@ namespace WebApplication1.Infrastructure.TagHelpers
         public RequestFormData RequestFormData { get; set; }
         public string PaginatorAction { get; set; } = "Index";
 
-        public PaginatorTagHelper(IUrlHelperFactory urlHelperFactory) => _urlHelperFactory = urlHelperFactory;
+        public PaginatorTagHelper(IUrlHelperFactory urlHelperFactory)
+        {
+            _urlHelperFactory = urlHelperFactory;
+        }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
