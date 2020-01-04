@@ -4,6 +4,7 @@
     "gulp-minify": "^3.1.0"
   },
   "scripts": {
-    "gulp": "gulp"
+    "gulp": "gulp",
+    "postinstall": "npm run gulp"
   }
 }
