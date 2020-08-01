@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "ConsoleApp1": {
-      "commandName": "Project",
-      "commandLineArgs": "Interfax http://www.interfax.by/news/feed/ Habrahabr http://habrahabr.ru/rss/"
-    }
-  }
-}

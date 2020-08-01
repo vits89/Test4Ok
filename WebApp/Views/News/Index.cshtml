@@ -1,0 +1,38 @@
+﻿@model NewsListViewModel
+@{
+    ViewBag.Title = "Новостная лента";
+}
+
+<a asp-action="IndexApi">Вариант страницы с асинхронным режимом работы</a>
+@await Component.InvokeAsync(nameof(RequestForm), Model.RequestFormData)
+<br />
+@if (Model.News.Count() > 0)
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Источник</th>
+                <th>Название новости</th>
+                <th>Описание новости</th>
+                <th>Дата публикации</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var news in Model.News)
+            {
+                <tr>
+                    <td>@news.NewsSource</td>
+                    <td>@news.Title</td>
+                    <td>@Html.Raw(news.Description)</td>
+                    <td>@news.PublishDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <div paging-info="@Model.PagingInfo" request-form-data="@Model.RequestFormData"></div>
+}
+else
+{
+    <p>Нет новостей</p>
+}
