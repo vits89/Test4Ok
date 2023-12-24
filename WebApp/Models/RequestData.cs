@@ -1,7 +1,6 @@
-﻿namespace Test4Ok.WebApp.Models
+﻿namespace Test4Ok.WebApp.Models;
+
+public class RequestData : RequestFormData
 {
-    public class RequestData : RequestFormData
-    {
-        public int Page { get; set; } = 1;
-    }
+    public int Page { get; set; } = 1;
 }

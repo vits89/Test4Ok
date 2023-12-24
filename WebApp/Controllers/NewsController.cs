@@ -1,37 +1,33 @@
-﻿using System.Threading.Tasks;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
 using Test4Ok.Infrastructure.Data;
 using Test4Ok.WebApp.Models;
 
-namespace Test4Ok.WebApp.Controllers
+namespace Test4Ok.WebApp.Controllers;
+
+public class NewsController(AppDbContext dbContext, IMapper mapper) : NewsBaseController(dbContext, mapper)
 {
-    public class NewsController : NewsBaseController
+    public async Task<IActionResult> Index(int? newsSource, bool? orderByDate, int page = 1)
     {
-        public NewsController(AppDbContext dbContext, IMapper mapper) : base(dbContext, mapper) { }
+        newsSource ??= TempData["newsSource"] as int?;
+        orderByDate ??= TempData["orderByDate"] as bool?;
 
-        public async Task<IActionResult> Index(int? newsSource, bool? orderByDate, int page = 1)
-        {
-            newsSource ??= TempData["newsSource"] as int?;
-            orderByDate ??= TempData["orderByDate"] as bool?;
+        return View(await GetNewsAsync(newsSource, orderByDate, page));
+    }
 
-            return View(await GetNewsAsync(newsSource, orderByDate, page));
-        }
+    [HttpPost]
+    public IActionResult Index(RequestFormData requestFormData)
+    {
+        TempData["newsSource"] = requestFormData.NewsSource;
+        TempData["orderByDate"] = requestFormData.OrderByDate;
 
-        [HttpPost]
-        public IActionResult Index(RequestFormData requestFormData)
-        {
-            TempData["newsSource"] = requestFormData.NewsSource;
-            TempData["orderByDate"] = requestFormData.OrderByDate;
+        RouteData.Values.Clear();
 
-            RouteData.Values.Clear();
+        return RedirectToAction();
+    }
 
-            return RedirectToAction();
-        }
-
-        public IActionResult IndexApi()
-        {
-            return View();
-        }
+    public IActionResult IndexApi()
+    {
+        return View();
     }
 }

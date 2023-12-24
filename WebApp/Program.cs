@@ -1,56 +1,62 @@
-﻿using System;
-using System.Reflection;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
+﻿using System.Reflection;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration.Json;
+using Microsoft.Extensions.FileProviders;
+using Test4Ok.Infrastructure.Data;
 
-namespace Test4Ok.WebApp
+var assembly = Assembly.GetExecutingAssembly();
+
+var builder = WebApplication.CreateBuilder(args);
+
+var index = builder.Configuration.Sources.ToList().FindIndex(s => s is JsonConfigurationSource);
+
+var configurationSource = new JsonConfigurationSource
 {
-    public class Program
+    Path = "sharedappsettings.json",
+    Optional = true,
+    ReloadOnChange = true,
+    FileProvider = new PhysicalFileProvider(Path.GetDirectoryName(assembly.Location)!)
+};
+
+builder.Configuration.Sources.Insert(index, configurationSource);
+
+var useSqlServer = builder.Configuration.GetValue<bool>("UseSqlServer");
+var connectionString = builder.Configuration.GetConnectionString(useSqlServer ? "SqlServer" : "Sqlite");
+
+builder.Services.AddAutoMapper(assembly);
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    if (useSqlServer)
     {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args)
-        {
-            return Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(builder =>
-                {
-                    builder.UseConfiguration(GetConfiguration(args))
-                        .UseStartup<Startup>();
-                });
-        }
-
-        private static IConfigurationRoot GetConfiguration(string[] args)
-        {
-            var confBuilder = new ConfigurationBuilder();
-
-            confBuilder.AddJsonFile("sharedappsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-
-            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
-            if (env != null)
-            {
-                confBuilder.AddJsonFile($"appsettings.{env}.json", optional: true, reloadOnChange: true);
-
-                if (env == Environments.Development)
-                {
-                    var appAssembly = Assembly.Load(new AssemblyName(Assembly.GetEntryAssembly().GetName().Name));
-
-                    if (appAssembly != null)
-                    {
-                        confBuilder.AddUserSecrets(appAssembly, optional: true);
-                    }
-                }
-            }
-
-            confBuilder.AddEnvironmentVariables()
-                .AddCommandLine(args);
-
-            return confBuilder.Build();
-        }
+        options.UseSqlServer(connectionString);
     }
-}
+    else
+    {
+        options.UseSqlite(connectionString);
+    }
+});
+builder.Services.AddControllersWithViews();
+
+var app = builder.Build();
+
+app.UseStatusCodePages();
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.MapControllerRoute(
+    name: string.Empty,
+    pattern: "NewsSource{newsSource:int}/Page{page:int}/{orderByDate:bool?}",
+    defaults: new { controller = "News", action = "Index" }
+);
+app.MapControllerRoute(
+    name: string.Empty,
+    pattern: "Page{page:int}/{orderByDate:bool?}",
+    defaults: new { controller = "News", action = "Index" }
+);
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=News}/{action=Index}/{page?}"
+);
+
+app.Run();

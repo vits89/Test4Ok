@@ -2,13 +2,12 @@
 using Test4Ok.AppCore.Entities;
 using Test4Ok.AppCore.Models;
 
-namespace Test4Ok.AppCore.MapperProfiles
+namespace Test4Ok.AppCore.MapperProfiles;
+
+public class NewsProfile : Profile
 {
-    public class NewsProfile : Profile
+    public NewsProfile()
     {
-        public NewsProfile()
-        {
-            CreateMap<NewsModel, News>();
-        }
+        CreateMap<NewsModel, News>();
     }
 }

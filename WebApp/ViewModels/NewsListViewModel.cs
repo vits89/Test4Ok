@@ -1,12 +1,10 @@
-using System.Collections.Generic;
 using Test4Ok.WebApp.Models;
 
-namespace Test4Ok.WebApp.ViewModels
+namespace Test4Ok.WebApp.ViewModels;
+
+public class NewsListViewModel
 {
-    public class NewsListViewModel
-    {
-        public IEnumerable<NewsViewModel> News { get; set; }
-        public PagingInfoViewModel PagingInfo { get; set; }
-        public RequestFormData RequestFormData { get; set; }
-    }
+    public IEnumerable<NewsViewModel> News { get; set; } = Enumerable.Empty<NewsViewModel>();
+    public PagingInfoViewModel PagingInfo { get; set; } = new();
+    public RequestFormData RequestFormData { get; set; } = new();
 }

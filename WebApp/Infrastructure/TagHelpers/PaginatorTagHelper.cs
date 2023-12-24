@@ -6,80 +6,72 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 using Test4Ok.WebApp.Models;
 using Test4Ok.WebApp.ViewModels;
 
-namespace Test4Ok.WebApp.Infrastructure.TagHelpers
+namespace Test4Ok.WebApp.Infrastructure.TagHelpers;
+
+[HtmlTargetElement("div", Attributes = "paging-info,request-form-data")]
+public class PaginatorTagHelper(IUrlHelperFactory urlHelperFactory) : TagHelper
 {
-    [HtmlTargetElement("div", Attributes = "paging-info,request-form-data")]
-    public class PaginatorTagHelper : TagHelper
+    [ViewContext]
+    [HtmlAttributeNotBound]
+    public ViewContext ViewContext { get; set; } = null!;
+
+    public PagingInfoViewModel PagingInfo { get; set; } = new();
+    public RequestFormData RequestFormData { get; set; } = new();
+    public string PaginatorAction { get; set; } = "Index";
+
+    public override void Process(TagHelperContext context, TagHelperOutput output)
     {
-        private readonly IUrlHelperFactory _urlHelperFactory;
+        var urlHelper = urlHelperFactory.GetUrlHelper(ViewContext);
 
-        [ViewContext]
-        [HtmlAttributeNotBound]
-        public ViewContext ViewContext { get; set; }
+        var divTagBuilder = new TagBuilder("div");
 
-        public PagingInfoViewModel PagingInfo { get; set; }
-        public RequestFormData RequestFormData { get; set; }
-        public string PaginatorAction { get; set; } = "Index";
-
-        public PaginatorTagHelper(IUrlHelperFactory urlHelperFactory)
+        for (var p = 1; p <= PagingInfo.TotalPages; p++)
         {
-            _urlHelperFactory = urlHelperFactory;
-        }
-
-        public override void Process(TagHelperContext context, TagHelperOutput output)
-        {
-            var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
-
-            var divTagBuilder = new TagBuilder("div");
-
-            for (var p = 1; p <= PagingInfo.TotalPages; p++)
+            if (p == PagingInfo.CurrentPage)
             {
-                if (p == PagingInfo.CurrentPage)
-                {
-                    divTagBuilder.InnerHtml.Append(p.ToString());
-                }
-                else
-                {
-                    var aTagBuilder = new TagBuilder("a");
+                divTagBuilder.InnerHtml.Append(p.ToString());
+            }
+            else
+            {
+                var aTagBuilder = new TagBuilder("a");
 
-                    object routeValues;
+                object routeValues;
 
-                    if (RequestFormData.NewsSource > 0)
+                if (RequestFormData.NewsSource > 0)
+                {
+                    if (!RequestFormData.OrderByDate)
                     {
-                        if (!RequestFormData.OrderByDate)
-                        {
-                            routeValues = new { RequestFormData.NewsSource, RequestFormData.OrderByDate, Page = p };
-                        }
-                        else
-                        {
-                            routeValues = new { RequestFormData.NewsSource, Page = p };
-                        }
+                        routeValues = new { RequestFormData.NewsSource, RequestFormData.OrderByDate, Page = p };
                     }
                     else
                     {
-                        if (!RequestFormData.OrderByDate)
-                        {
-                            routeValues = new { RequestFormData.OrderByDate, Page = p };
-                        }
-                        else
-                        {
-                            routeValues = new { Page = p };
-                        }
+                        routeValues = new { RequestFormData.NewsSource, Page = p };
                     }
-
-                    aTagBuilder.Attributes["href"] = urlHelper.Action(PaginatorAction, routeValues);
-                    aTagBuilder.InnerHtml.Append(p.ToString());
-
-                    divTagBuilder.InnerHtml.AppendHtml(aTagBuilder);
                 }
-
-                if (p < PagingInfo.TotalPages)
+                else
                 {
-                    divTagBuilder.InnerHtml.Append(" ");
+                    if (!RequestFormData.OrderByDate)
+                    {
+                        routeValues = new { RequestFormData.OrderByDate, Page = p };
+                    }
+                    else
+                    {
+                        routeValues = new { Page = p };
+                    }
                 }
+
+                aTagBuilder.Attributes["href"] = urlHelper.Action(PaginatorAction, routeValues);
+                aTagBuilder.InnerHtml.Append(p.ToString());
+
+                divTagBuilder.InnerHtml.AppendHtml(aTagBuilder);
             }
 
-            output.Content.AppendHtml(divTagBuilder.InnerHtml);
+            if (p < PagingInfo.TotalPages)
+            {
+                divTagBuilder.InnerHtml.Append(" ");
+            }
         }
+
+        output.Content.AppendHtml(divTagBuilder.InnerHtml);
     }
 }

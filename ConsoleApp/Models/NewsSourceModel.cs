@@ -1,16 +1,15 @@
-﻿namespace Test4Ok.ConsoleApp.Models
+﻿namespace Test4Ok.ConsoleApp.Models;
+
+public class NewsSourceModel
 {
-    public class NewsSourceModel
+    public string Name { get; set; } = string.Empty;
+    public string Url { get; set; } = string.Empty;
+
+    public int NewsRead { get; set; }
+    public int NewsSaved { get; set; }
+
+    public override string ToString()
     {
-        public string Name { get; set; }
-        public string Url { get; set; }
-
-        public int ReadOfNews { get; set; }
-        public int SavedOfNews { get; set; }
-
-        public override string ToString()
-        {
-            return $"Источник: {Name}; прочитано новостей: {ReadOfNews}; сохранено новостей: {SavedOfNews}.";
-        }
+        return $"Источник: {Name}; прочитано новостей: {NewsRead}; сохранено новостей: {NewsSaved}.";
     }
 }
