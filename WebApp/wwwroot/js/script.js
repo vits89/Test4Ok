@@ -1,11 +1,11 @@
 $(() => {
     const apiUrl = "/api/news";
 
-    const $news = $("#news"),
-        $requestForm = $("#request-form");
+    const $news = $("#News"),
+        $requestForm = $("#RequestForm");
 
     const init = () => {
-        $requestForm.on("submit", handleRequestFormSubmit).submit();
+        $requestForm.on("submit", handleRequestFormSubmit).trigger("submit");
     };
 
     const handleRequestFormSubmit = function (event) {
@@ -40,12 +40,12 @@ $(() => {
         $news.empty();
 
         if (data.news.length > 0) {
-            $news.append(createTable(data.news));
+            const $main = $("<main></main>");
 
-            if (data.pagingInfo.totalPages > 0) {
-                $news.append("<br>")
-                    .append(createPaginator(data.pagingInfo, data.requestFormData));
-            }
+            $main.append(createTable(data.news));
+            $main.append(createPaginator(data.pagingInfo, data.requestFormData));
+
+            $news.append($main);
         } else {
             $news.append("<p>Нет новостей</p>");
         }
@@ -61,7 +61,7 @@ $(() => {
             "Описание новости",
             "Дата публикации"
         ].forEach(value => {
-            const $element = $("<th></th>").text(value);
+            const $element = $("<th></th>").attr({ scope: "col" }).text(value);
 
             $row.append($element);
         });
@@ -84,31 +84,39 @@ $(() => {
             $body.append($row);
         });
 
-        return $("<table></table>").append([$head, $body]);
+        return $("<table></table>").addClass("table table-bordered").append([$head, $body]);
     };
     const createPaginator = (pagingInfo, requestData) => {
-        const $paginator = $("<div></div>").on("click", "a", handlePaginatorClick);
+        const $navigation = $("<nav></nav>", { "aria-label": "News pages" }),
+            $paginator = $("<ul></ul>")
+                .addClass("pagination m-0")
+                .on("click", "a", handlePaginatorClick);
 
         for (let p = 1; p <= pagingInfo.totalPages; p++) {
+            const $pageItem = $("<li></li>").addClass("page-item");
+
+            let $pageLink;
+
             if (p === pagingInfo.currentPage) {
-                $paginator.append(p);
+                $pageItem.addClass("active").attr({ "aria-current": "page" });
+
+                $pageLink = $("<span></span>");
             } else {
-                const anchorDataValues = {
+                const linkDataValues = {
                     newsSource: requestData.newsSource,
                     orderByDate: requestData.orderByDate
                 };
 
-                const $anchorElement = $("<a></a>", { href: "#" }).data(anchorDataValues).text(p);
-
-                $paginator.append($anchorElement);
+                $pageLink = $("<a></a>", { href: "#" }).data(linkDataValues);
             }
 
-            if (p < pagingInfo.totalPages) {
-                $paginator.append(" ");
-            }
+            $pageLink.addClass("page-link").text(p);
+
+            $pageItem.append($pageLink);
+            $paginator.append($pageItem);
         }
 
-        return $paginator;
+        return $navigation.append($paginator);
     };
 
     init();

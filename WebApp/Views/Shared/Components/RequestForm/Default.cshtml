@@ -1,13 +1,26 @@
 @model RequestFormData
 
-<form id="request-form" method="POST" asp-action="Index" asp-antiforgery="false">
-    <label asp-for="NewsSource">Источник ленты:</label>
-    <select asp-for="NewsSource" asp-items="ViewBag.NewsSources">
-        <option value="">все</option>
-    </select>
-    <br />
-    Сортировать по
-    @Html.RadioButtonFor(m => m.OrderByDate, true)<label>дате</label>
-    @Html.RadioButtonFor(m => m.OrderByDate, false)<label>источнику</label><br />
-    <input type="submit" value="Просмотреть" />
+<form id="RequestForm" class="mb-3" method="POST" asp-action="Index">
+    <div class="row">
+        <div class="col-3 mb-3">
+            <label class="form-label" asp-for="NewsSource">Источник ленты:</label>
+            <select class="form-select" asp-for="NewsSource" asp-items="ViewBag.NewsSources">
+                <option value="">все</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <fieldset class="col-3 mb-3">
+            <legend class="fs-6">Сортировать по</legend>
+            <label class="form-check-label">
+                @Html.RadioButtonFor(m => m.OrderByDate, true, new { @class = "form-check-input" })
+                дате
+            </label>
+            <label class="form-check-label">
+                @Html.RadioButtonFor(m => m.OrderByDate, false, new { @class = "form-check-input" })
+                источнику
+            </label>
+        </fieldset>
+    </div>
+    <button class="btn btn-primary" type="submit">Просмотреть</button>
 </form>

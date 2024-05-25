@@ -2,14 +2,24 @@
     ViewBag.Title = "Новостная лента";
 }
 
-<a asp-action="Index">Вариант страницы с синхронным режимом работы</a>
-@await Component.InvokeAsync(nameof(RequestForm), new RequestFormData())
-<br />
-<div id="news"></div>
-<script asp-src-include="~/lib/**/*.min.js"></script>
+<header>
+    <h1>@ViewBag.Title</h1>
+    <a asp-action="Index">Вариант страницы с синхронным режимом работы</a>
+
+    @await Component.InvokeAsync(nameof(RequestForm), new RequestFormData())
+</header>
+<div id="News"></div>
+
 <environment include="Development">
+    <script src="~/lib/jquery/jquery.min.js"></script>
     <script asp-src-include="~/js/*.js" asp-src-exclude="~/js/*.min.js"></script>
 </environment>
 <environment exclude="Development">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"
+            asp-fallback-src="~/lib/jquery/jquery.min.js"
+            asp-fallback-test="window.jQuery">
+    </script>
     <script asp-src-include="~/js/*.min.js"></script>
 </environment>

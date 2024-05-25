@@ -3,34 +3,43 @@
     ViewBag.Title = "Новостная лента";
 }
 
-<a asp-action="IndexApi">Вариант страницы с асинхронным режимом работы</a>
-@await Component.InvokeAsync(nameof(RequestForm), Model.RequestFormData)
-<br />
-@if (Model.News.Count() > 0)
+<header>
+    <h1>@ViewBag.Title</h1>
+    <a asp-action="IndexApi">Вариант страницы с асинхронным режимом работы</a>
+
+    @await Component.InvokeAsync(nameof(RequestForm), Model.RequestFormData)
+</header>
+
+@if (Model.News.Any())
 {
-    <table>
-        <thead>
-            <tr>
-                <th>Источник</th>
-                <th>Название новости</th>
-                <th>Описание новости</th>
-                <th>Дата публикации</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var news in Model.News)
-            {
+    <main>
+        <table class="table table-bordered">
+            <thead>
                 <tr>
-                    <td>@news.NewsSource</td>
-                    <td>@news.Title</td>
-                    <td>@Html.Raw(news.Description)</td>
-                    <td>@news.PublishDate</td>
+                    <th scope="col">Источник</th>
+                    <th scope="col">Название новости</th>
+                    <th scope="col">Описание новости</th>
+                    <th scope="col">Дата публикации</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-    <br />
-    <div paging-info="@Model.PagingInfo" request-form-data="@Model.RequestFormData"></div>
+            </thead>
+            <tbody>
+                @foreach (var news in Model.News)
+                {
+                    <tr>
+                        <td>@news.NewsSource</td>
+                        <td>@news.Title</td>
+                        <td>@Html.Raw(news.Description)</td>
+                        <td>@news.PublishDate</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <nav aria-label="News pages"
+             paging-info="@Model.PagingInfo"
+             request-form-data="@Model.RequestFormData"
+             pages-list-class="pagination m-0">
+        </nav>
+    </main>
 }
 else
 {
