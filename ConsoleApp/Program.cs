@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Test4Ok.AppCore.Entities;
 using Test4Ok.ConsoleApp;
 using Test4Ok.ConsoleApp.Models;
@@ -8,13 +9,15 @@ using Test4Ok.Infrastructure.Services;
 
 var newsSourceModels = FormNewsSources(args).ToArray();
 
-MapperConfig.Initialize();
+var configuration = BuildConfiguration();
+
+MapperConfig.Initialize(configuration, LoggerFactory.Create(builder => builder.AddConsole()));
 
 var mapper = MapperConfig.Configuration!.CreateMapper();
 
 var newsReader = new NewsFeedReader();
 
-using var dbContext = new AppDbContext(GetDbContextOptions());
+using var dbContext = new AppDbContext(GetDbContextOptions(configuration));
 
 var newsSourceNames = newsSourceModels.Select(ns => ns.Name);
 var newsSources = dbContext.NewsSources.Where(ns => newsSourceNames.Contains(ns.Name)).ToDictionary(ns => ns.Name);
@@ -78,7 +81,7 @@ static IEnumerable<NewsSourceModel> FormNewsSources(IList<string> values)
     }
 }
 
-static DbContextOptions<AppDbContext> GetDbContextOptions()
+static IConfiguration BuildConfiguration()
 {
     var configurationBuilder = new ConfigurationBuilder();
 
@@ -93,8 +96,11 @@ static DbContextOptions<AppDbContext> GetDbContextOptions()
         configurationBuilder.AddJsonFile($"appsettings.{env}.json", optional: true);
     }
 
-    var configuration = configurationBuilder.Build();
+    return configurationBuilder.Build();
+}
 
+static DbContextOptions<AppDbContext> GetDbContextOptions(IConfiguration configuration)
+{
     var useSqlServer = configuration.GetValue<bool>("UseSqlServer");
     var connectionString = configuration.GetConnectionString(useSqlServer ? "SqlServer" : "Sqlite");
 

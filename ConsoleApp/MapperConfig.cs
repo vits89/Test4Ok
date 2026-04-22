@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Test4Ok.AppCore.Entities;
 using Test4Ok.AppCore.MapperProfiles;
 using Test4Ok.ConsoleApp.Models;
@@ -9,13 +11,17 @@ public class MapperConfig
 {
     public static MapperConfiguration? Configuration { get; private set; }
 
-    public static void Initialize()
+    public static void Initialize(IConfiguration configuration, ILoggerFactory loggerFactory)
     {
-        Configuration = new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<NewsProfile>();
+        Configuration = new MapperConfiguration(
+            cfg =>
+            {
+                cfg.LicenseKey = configuration["AutoMapperLicenseKey"];
 
-            cfg.CreateMap<NewsSourceModel, NewsSource>();
-        });
+                cfg.AddProfile<NewsProfile>();
+
+                cfg.CreateMap<NewsSourceModel, NewsSource>();
+            },
+            loggerFactory);
     }
 }

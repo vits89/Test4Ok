@@ -1,4 +1,5 @@
 ﻿{
+  "AutoMapperLicenseKey": "",
   "UseSqlServer": true,
   "ConnectionStrings": {
     "Sqlite": "Data Source=..\\News.db",

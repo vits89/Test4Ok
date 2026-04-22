@@ -23,7 +23,14 @@ builder.Configuration.Sources.Insert(index, configurationSource);
 var useSqlServer = builder.Configuration.GetValue<bool>("UseSqlServer");
 var connectionString = builder.Configuration.GetConnectionString(useSqlServer ? "SqlServer" : "Sqlite");
 
-builder.Services.AddAutoMapper(assembly);
+builder.Services.AddAutoMapper(
+    (sp, cfg) =>
+    {
+        var configuration = sp.GetRequiredService<IConfiguration>();
+
+        cfg.LicenseKey = configuration["AutoMapperLicenseKey"];
+    },
+    assembly);
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     if (useSqlServer)
