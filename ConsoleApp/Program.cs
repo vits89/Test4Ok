@@ -7,7 +7,14 @@ using Test4Ok.ConsoleApp.Models;
 using Test4Ok.Infrastructure.Data;
 using Test4Ok.Infrastructure.Services;
 
-var newsSourceModels = FormNewsSources(args).ToArray();
+var newsSourceModels = args
+    .Chunk(2)
+    .Select(values => new NewsSourceModel
+    {
+        Name = values[0],
+        Url = values[1]
+    })
+    .ToList();
 
 var configuration = BuildConfiguration();
 
@@ -19,8 +26,10 @@ var newsReader = new NewsFeedReader();
 
 using var dbContext = new AppDbContext(GetDbContextOptions(configuration));
 
-var newsSourceNames = newsSourceModels.Select(ns => ns.Name);
-var newsSources = dbContext.NewsSources.Where(ns => newsSourceNames.Contains(ns.Name)).ToDictionary(ns => ns.Name);
+var newsSourceNames = newsSourceModels.Select(ns => ns.Name).ToList();
+
+var newsSources =
+    await dbContext.NewsSources.Where(ns => newsSourceNames.Contains(ns.Name)).ToDictionaryAsync(ns => ns.Name);
 
 foreach (var newsSourceModel in newsSourceModels)
 {
@@ -32,8 +41,8 @@ foreach (var newsSourceModel in newsSourceModels)
         {
             newsSourceModel.NewsRead++;
 
-            var alreadyExists = dbContext.News
-                .Any(n => n.Title == newsModel.Title && n.PublishDate == newsModel.PublishDate);
+            var alreadyExists = await dbContext.News.AnyAsync(
+                n => n.Title == newsModel.Title && n.PublishDate == newsModel.PublishDate);
 
             if (alreadyExists)
             {
@@ -57,9 +66,9 @@ foreach (var newsSourceModel in newsSourceModels)
             newsSourceModel.NewsSaved++;
         }
     }
-    catch (Exception e)
+    catch (Exception ex)
     {
-        Console.WriteLine(e.Message);
+        Console.WriteLine(ex.Message);
     }
     finally
     {
@@ -67,29 +76,17 @@ foreach (var newsSourceModel in newsSourceModels)
     }
 }
 
-dbContext.SaveChanges();
-
-static IEnumerable<NewsSourceModel> FormNewsSources(IList<string> values)
-{
-    for (var i = 0; i <= (int)Math.Floor((double)values.Count / 2); i += 2)
-    {
-        yield return new NewsSourceModel
-        {
-            Name = values[i],
-            Url = values[i + 1]
-        };
-    }
-}
+await dbContext.SaveChangesAsync();
 
 static IConfiguration BuildConfiguration()
 {
+    var env = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
+
     var configurationBuilder = new ConfigurationBuilder();
 
     configurationBuilder
         .AddJsonFile("sharedappsettings.json", optional: true)
         .AddJsonFile("appsettings.json", optional: true);
-
-    var env = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
 
     if (!string.IsNullOrWhiteSpace(env))
     {
@@ -101,18 +98,18 @@ static IConfiguration BuildConfiguration()
 
 static DbContextOptions<AppDbContext> GetDbContextOptions(IConfiguration configuration)
 {
-    var useSqlServer = configuration.GetValue<bool>("UseSqlServer");
-    var connectionString = configuration.GetConnectionString(useSqlServer ? "SqlServer" : "Sqlite");
+    var useSqlite = configuration.GetValue<bool>("UseSqlite");
+    var connectionString = configuration.GetConnectionString(useSqlite ? "Sqlite" : "SqlServer");
 
     var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 
-    if (useSqlServer)
+    if (useSqlite)
     {
-        optionsBuilder.UseSqlServer(connectionString);
+        optionsBuilder.UseSqlite(connectionString);
     }
     else
     {
-        optionsBuilder.UseSqlite(connectionString);
+        optionsBuilder.UseSqlServer(connectionString);
     }
 
     return optionsBuilder.Options;

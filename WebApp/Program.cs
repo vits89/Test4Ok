@@ -20,8 +20,8 @@ var configurationSource = new JsonConfigurationSource
 
 builder.Configuration.Sources.Insert(index, configurationSource);
 
-var useSqlServer = builder.Configuration.GetValue<bool>("UseSqlServer");
-var connectionString = builder.Configuration.GetConnectionString(useSqlServer ? "SqlServer" : "Sqlite");
+var useSqlite = builder.Configuration.GetValue<bool>("UseSqlite");
+var connectionString = builder.Configuration.GetConnectionString(useSqlite ? "Sqlite" : "SqlServer");
 
 builder.Services.AddAutoMapper(
     (sp, cfg) =>
@@ -31,15 +31,15 @@ builder.Services.AddAutoMapper(
         cfg.LicenseKey = configuration["AutoMapperLicenseKey"];
     },
     assembly);
-builder.Services.AddDbContext<AppDbContext>(options =>
+builder.Services.AddDbContext<AppDbContext>(opts =>
 {
-    if (useSqlServer)
+    if (useSqlite)
     {
-        options.UseSqlServer(connectionString);
+        opts.UseSqlite(connectionString);
     }
     else
     {
-        options.UseSqlite(connectionString);
+        opts.UseSqlServer(connectionString);
     }
 });
 builder.Services.AddControllersWithViews();
@@ -66,4 +66,4 @@ app.MapControllerRoute(
     pattern: "{controller=News}/{action=Index}/{page?}"
 );
 
-app.Run();
+await app.RunAsync();

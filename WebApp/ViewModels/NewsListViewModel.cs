@@ -4,7 +4,7 @@ namespace Test4Ok.WebApp.ViewModels;
 
 public class NewsListViewModel
 {
-    public IEnumerable<NewsViewModel> News { get; set; } = Enumerable.Empty<NewsViewModel>();
+    public IEnumerable<NewsViewModel> News { get; set; } = [];
     public PagingInfoViewModel PagingInfo { get; set; } = new();
     public RequestFormData RequestFormData { get; set; } = new();
 }

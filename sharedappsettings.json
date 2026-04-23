@@ -1,8 +1,8 @@
 ﻿{
   "AutoMapperLicenseKey": "",
-  "UseSqlServer": true,
+  "UseSqlite": false,
   "ConnectionStrings": {
-    "Sqlite": "Data Source=..\\News.db",
+    "Sqlite": "Data Source=News.db",
     "SqlServer": "Server=(localdb)\\MSSQLLocalDB;Database=News;Trusted_Connection=True;MultipleActiveResultSets=true"
   }
 }

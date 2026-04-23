@@ -31,12 +31,12 @@ public abstract class NewsBaseController(AppDbContext dbContext, IMapper mapper)
 
         var newsListViewModel = new NewsListViewModel
         {
-            News = Enumerable.Empty<NewsViewModel>(),
+            News = [],
             PagingInfo = pagingInfo,
             RequestFormData = requestFormData
         };
 
-        if (!(await dbContext.NewsSources.AnyAsync()))
+        if (!await dbContext.NewsSources.AnyAsync())
         {
             return newsListViewModel;
         }
@@ -45,7 +45,7 @@ public abstract class NewsBaseController(AppDbContext dbContext, IMapper mapper)
 
         if (requestFormData.NewsSource.HasValue)
         {
-            if ((await dbContext.NewsSources.FindAsync(requestFormData.NewsSource.Value)) == null)
+            if ((await dbContext.NewsSources.FindAsync(requestFormData.NewsSource.Value)) is null)
             {
                 return newsListViewModel;
             }
@@ -55,13 +55,13 @@ public abstract class NewsBaseController(AppDbContext dbContext, IMapper mapper)
 
         pagingInfo.TotalItems = await news.CountAsync();
 
-        news = requestFormData.OrderByDate ?
-            news.OrderByDescending(n => n.PublishDate) :
-            news.OrderBy(n => n.NewsSource.Name);
+        news = requestFormData.OrderByDate
+            ? news.OrderByDescending(n => n.PublishDate)
+            : news.OrderBy(n => n.NewsSource.Name);
 
         news = news.Skip((pagingInfo.CurrentPage - 1) * newsPerPage).Take(newsPerPage);
 
-        newsListViewModel.News = await news.ProjectTo<NewsViewModel>(mapper.ConfigurationProvider).ToArrayAsync();
+        newsListViewModel.News = await news.ProjectTo<NewsViewModel>(mapper.ConfigurationProvider).ToListAsync();
 
         return newsListViewModel;
     }

@@ -7,7 +7,7 @@ using Test4Ok.ConsoleApp.Models;
 
 namespace Test4Ok.ConsoleApp;
 
-public class MapperConfig
+public static class MapperConfig
 {
     public static MapperConfiguration? Configuration { get; private set; }
 
